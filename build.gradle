@@ -1,0 +1,97 @@
+
+
+
+task hello {
+    doLast {
+        println "Hello GRD"
+    }
+}
+
+apply plugin: 'java'
+
+//In case we need to build the project with an older version of gradle
+//task wrapper (type: Wrapper){
+//    gradleVersion = '2.6';
+//}
+
+//Defining a task
+//To see all tasks run in cmd line in the project directory: "gradle tasks"
+project.task("Task1")
+
+//We can also define tasks without using "project" - because this is the default
+//"project" is the top pbject
+task("Task2")
+
+//Also it's not mandatory to put the brackets "(  )"
+task "Task3"
+
+//Also it's not mandatory to use the quotes -- " "
+task Task4
+
+//Dupa ce definim un task ii putem adauga proprietati
+//Toate task-urile au o proprietate gata definita "description"
+Task4.description = "Task4 description"
+
+//=============================================================================
+
+//Toate task-urile au o metoda "doLast"
+//Metoda "doLast" este ultimul lucru pe care il face task-ul
+//Aici trebuie puse actiunile pe care vrem sa le execute task-ul
+Task4.doLast {
+    println "This is task4"
+}
+
+//Putem sa folosim operatorul "<<" in loc de "doLast" pentru a adauga o "cloasure" pentur doLast
+//Ce este intre acolade reprezinta "cloasure"
+Task3 << {println "This is task3"}
+
+//Scenariu uzual:
+//Definim task-ul si imediat ii dam ultima metoda pe care sa o execute
+//Va pune codul din acolade in metoda doLast
+task Task5 << {println "This is tasks5"}
+
+//Dupa ce un task este declarat, acesta nu este inghetat
+//Putem face append la chestii noi care sa fie executate de acest task
+Task5 << {println "Another cloasure in Task5"}
+
+Task5.doFirst{
+    println "Task5 - doFirst"
+}
+
+//*** Putem crea o descriptie si o metoda doLast pentur un task intr-un singur pas
+task Task6{
+    description "Task 6 description"
+    dependsOn Task5
+    doFirst {
+        println "Task6 - doFirst"
+    }
+    doLast {
+        println "This is Task6 doLast"
+    }
+}
+
+//Daca adaugam un nou doFirst sau doLast la Task6, continulul noului doFirst sau doLast va fi "alipit la continutul deja existent pt acea metoda"
+//Noile instructiuni adaugate in doFirst pentru Task6 vor fi executate inaintea celor deja existente in doFirst ("Another Task6 First" va fi printat inaintea textului "Task6 - doFirst")
+Task6.doFirst{
+   println "Another Task6 First"
+}
+
+//Noile instructiuni adaugate in doLast pentru Task6 vor fi executate dupa instructiunile existente in doLast ("Another Task6 Last" va fi executat dupa "This is Task6 doLast")
+Task6.doLast{
+    println "Another Task6 Last"
+}
+
+//***###***
+//Fiecare task are o metoda "dependsOn" pe care o putem folosi pentru a specifica dependintele unui task de alte task-uri
+
+//Aceste dependinte pot fi puse sin in declaratia task-ului
+//Task6.dependsOn Task5
+Task5.dependsOn Task4
+//Un task poate sa depinda de mai multe task-uri
+Task5.dependsOn Task3
+
+
+//***###***
+//Putem adauga proprietati in gradle -- si avem 2 variante pentru a face asta:
+//- putem defini variabile locale folosind cuvantul cheie "def"
+def projectVersion 
