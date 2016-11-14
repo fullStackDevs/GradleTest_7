@@ -93,5 +93,26 @@ Task5.dependsOn Task3
 
 //***###***
 //Putem adauga proprietati in gradle -- si avem 2 variante pentru a face asta:
-//- putem defini variabile locale folosind cuvantul cheie "def"
-def projectVersion 
+//1) Putem defini variabile locale folosind cuvantul cheie "def"
+//***Aceasta varibila este disponibila (are scopul) in buildFile. Daca avem de facut build la mai multe proiecte deodata, aceasta variabila nu va fi vizibila in celelalte buildFiles
+def projectVersion = "2.0"
+//Pentru a accesa valoarea variabilei in interiorul unui string putem folosi "$num_variabila
+//Aceste variabile pot fi definite si in itneriorul unui task (in cloesure)
+
+Task6.doLast{
+    println "The value of the local variable projectVersion is $projectVersion"
+}
+
+//2)Putem defini variabile folosind extended properties
+//*** Putem defini si variabile cu un scop mai mare (care pot fi share-uite in tot proiectul) trebuie sa folosim "extra - properties"
+//Pe obiectul "projext", pe "ext" definim variabilele de care avem nevoie
+//Aceasta variabila va fi disponibila in acest build file dar si in alte build files din interiorul proiectului
+project.ext.projectOwner = "Jerry"
+Task6.doLast{
+    println "The project owner is: $project.ext.projectOwner"
+}
+
+//Nu este insa obligatoriu sa punem si "project.ext." in fata variabilei. Daca scriem simplu numele variabilei tot va merge
+Task6.doLast{
+    println "Project owner reprinted: $projectOwner"
+}
