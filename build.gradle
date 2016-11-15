@@ -41,7 +41,7 @@ Task4.doLast {
     println "This is task4"
 }
 
-//Putem sa folosim operatorul "<<" in loc de "doLast" pentru a adauga o "cloasure" pentur doLast
+//Putem sa folosim operatorul "<<" in loc de "doLast" pentru a adauga un "cloasure" pentru doLast
 //Ce este intre acolade reprezinta "cloasure"
 Task3 << {println "This is task3"}
 
@@ -116,3 +116,200 @@ Task6.doLast{
 Task6.doLast{
     println "Project owner reprinted: $projectOwner"
 }
+
+//======================================================================================================================================
+//***###***
+//MODULE 3 - TASK DEPENDENCIES
+
+task TaskA << {println "taskA"}
+task TaskB << {println "taskB"}
+task TaskC << {println "taskC"}
+task TaskD << {println "taskD"}
+task TaskE << {println "taskE"}
+task TaskH << {println "taskH"}
+
+TaskA.dependsOn TaskB, TaskC
+TaskA.dependsOn TaskD
+TaskC.dependsOn TaskE
+TaskD.dependsOn TaskE
+
+//Dependintele de alte task-uri pot fi de asemenea puse in definitia task-ului
+
+task TaskG << {println "taskG"}
+
+task TaskF{
+    //***!!!*** task-ul TaskG trebuie declarat inainte de a defini o dependinta catre el (trebuie pus mai sus de linia "dependsOn TaskG")
+    dependsOn TaskG
+    doLast{
+        println "taskF"
+    }
+}
+
+TaskA.dependsOn TaskF
+
+//================================================
+//*** OTHER DEPENDENCIES
+
+//  .mustRunAfter ... -- daca 2 task-uri sunt executate odata si unul dintre ele trebuie sa fie exexutat inaintea altuia (executare mai multe task-uri: "gradle -q TaskA TaskA")
+
+TaskB.mustRunAfter TaskC, TaskD
+
+//***Daca adaugam o dependinta circulara pt TaskB cu metoda de mai sus va da eroare. Daca folosim insa "shouldRunAfter" gradle va putea detecta dependinta circulara si o va ignora
+//TaskB.mustRunAfter TaskB
+
+//EX 2:
+task Task11 << {println "task11"}
+task Task22 << {println "task22"}
+
+// Task11 nu este dependent de Task22. Instructiunea de mai jos va avea efect doar daca executam ambele task-uri in aceeasi operatie: "gradle -q Task11 Task22"
+Task11.mustRunAfter Task22
+
+//--------------------------------------------------
+// .shouldRunAfter ... -- daca 2 task-uri sunt rulate odata si unul dintre ele ar trebui sa fie executat inaintea celalalt
+//                     -- *#* aceasta varianta ignora dependintele circulare spre deosebire de cea de mai sus
+
+//*** Ambele dependinte de mai jos sunt ciruculare insa nu apar erori la rulare deoarece este folosita metoda "shouldRunAfter". Aceasta metoda detecteaza dependintele circulare atunci cand
+//construieste graful si ignoa aceste dependinte
+TaskE.shouldRunAfter TaskC //--- TaskC depinde de TaskE si daca incercam sa executam TaskE inaintea lui TaskC va aparea o dependenta circulara
+TaskB.shouldRunAfter TaskB
+
+TaskC.shouldRunAfter TaskD
+
+//-------------------------------------------------
+
+// .finalizedBy ... -- dependinte inversate
+
+//**###**
+//De fiecare data cand rulam TaskB trebuie sa rulam TaskH dupa TaskB
+//TaskH va rula intotdeauna dupa cd TaskB daca TaskB va fi executat
+TaskB.finalizedBy TaskH
+
+//***Situatie in care e utila metoda "finalizedBy"
+task migrateProduction {
+    group = "deploy"
+    description = "Run migration scripts for production"
+    doFirst {
+        //Database migration
+        flyway {
+            url = 'jdbc:mysql://localhost:5432'
+            user = 'root'
+            password = 'password'
+            schemas = ['jacket']
+            locations = ["filesystem${projectDir}/migrations/common", "filesystem:${projectDir}/migrations/mysql"]
+            sqlMigrationPrefix = ""
+            baselineOnMigrate = true
+            ouOfOrder = true
+        }
+    }
+}
+
+task migrateTest{
+    group = "test"
+    description = "Run migration scripts for test"
+    doFirst{
+        flyway{
+            url = 'jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DATABASE_ TO_UPPER=false'
+            user = 'sa'
+            password = ''
+            schemas = ['jacket']
+            locations = ["filesystem${projectDir}/migrations/common", "filesystem:${projectDir}/migrations/h2"]
+            sqlMigrationPrefix = ""
+            baselineOnMigrate = true
+            ouOfOrder = true
+        }
+
+    }
+}
+
+//***###*** Putem apela metoda "flyway" o singura data in fisierul d build. Daca incercam sa apelam de 2 ori,
+//al 2-lea apel va suprascrie primul apel
+// Pentru a rezolva aceasta problema putem crea un task care sa configureze flyway migration si apoi sa rulam task-ul "flywayMigrate" folosind "finalizedBy"
+
+//* Cand rulam "gradle migrateProduction", gradle va rula task-ul "migrateProduction" care configureaza flyway iar apoi este urlat task-ul "flywayMigrate"
+//Deci flywayMigrate var rula cu acea configuratie de flyway
+//migrateProduction.finalizedBy flywayMigrate
+
+//Similar cu exemplul de mai sus functioneaza si urmatorul exemplu
+//migrateTest.finalizedBy flywayMigrate
+
+
+//=====================================================================================================
+//***###***
+//MODULE 4 - TYPED TASKS
+//--------------------------------------------------
+//Reutilizarea task-urilor. Vrem sa cream task-uri pe care apoi sa le reutilizat furnizandu-le doar niste configurari
+//Pt a face asta trebuie sa folosim "TypedTasks"
+//Daca vrem sa facem ceva mai complex intr-un task va fi nevoie de mai mult cod in acel task. Este indicat sa extragem
+//acel cod in alt task pe care apoi sa il apelam in interiorul primului task
+//EX: dava vrem sa scriem un task care copie un fisier va trebui sa: deschidem fisierul, sa il citim si sa il scriem in
+//noua locatie
+//Am putea crea un task "coppyFile" pe care sa il configuram cu numele fisierelor. Astfel am putea reutiliza task-ul respectiv
+
+//Similar pt arhivarea unor fisiere - putem crea un task configurabil care sa primeasca numele fisierelor care trebuie
+//arhivate, numele arhivei, si locatia unde trebuie salvata
+
+//Pe site-ul gradle.org in sectiunea "DSL Reference" avem "Task types" -- tasck-uri gata definite care trebuie doar configurate
+//pentru a fi folosite
+
+def contentSpec = copySpec{
+    //exclude 'sql read only 20.07.2015.txt', 'sql read only 20.07.2015 - Copy.txt'
+    //Putem scrie cod groovy care si fie executat ca parte din task
+    //In loc de exclude-ul de mai sus putem pune o conditie in cod care sa filtreze rezultatele in functie de un regex
+    //Pentru "exclude" dam un closaure care sa fie executat
+    // "exclude" are acces la un iterator care itereaza prin toate fisierele care trebuie copiate
+    // "it" - reprezinta iteratorul
+    // "file" - reprezinta fisierul pe care incercam sa il copiem
+    // "name" - numele fisierului
+    exclude {it.file.name.startsWith('UPDAT')}
+    from 'sourceCopyFiles'
+}
+
+task copyFiles2 (type: Copy){
+    with contentSpec
+    into 'destinationCopyFiles'
+}
+
+
+task copyFiles (type: Copy) {
+    from 'sourceCopyFiles'
+    into 'destinationCopyFiles'
+}
+
+//***##***
+//Folosirea task-ului "copy" pentru a substitui bucati de text din fisierul sursa inainte de a fi salvate in fisierul destinatie
+//Inlocuirea se face folosing "expand"
+task copyAndSubstitute (type: Copy){
+    // "include" -- specifica ce fisiere sa fie copiate dintr-un direcotr in altul. Daca nu specificam acest parametru vor fi
+    //copiate toate fisierele
+    include 'web.xml'
+    from 'sourceCopyFiles'
+    into 'destinationCopyFiles'
+    expand ([resourceRefName: 'jdbd/JackedDB'])
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

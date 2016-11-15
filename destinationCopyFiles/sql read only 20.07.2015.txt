@@ -1,0 +1,68 @@
+
+
+select * from usr_user where upper(usr_full_name) like upper('%Hayley%');
+select * from usr_user where upper(usr_signature_file) like upper('%Rehman%');
+--JalilRehman.bmp
+--update usr_user set usr_signature_file = 'JalilRehman.bmp' where usr_user_name = 'hmason';
+
+
+
+
+select * from usr_user where upper(usr_logon) like upper('%F022230%');
+
+--update usr_user set usr_signature_file = 'MichaelJCasella.bmp' where usr_logon = 'F12715A';"
+
+--=================================================================================================
+
+select * from xya_xythos_adapt where cpt_id = 22702348113;
+update xya_xythos_adapt set xya_document_hidden = 'Y' where cpt_id = 22702348113 and xya_path_id in ('6443082','6443081');
+
+--=================================================================================================
+
+select * from usr_user where upper(usr_full_name) like upper('%Janus%');
+
+select * from CC_CHILD_CACHE where lower(ref_value) like '%chan%';
+
+select * from cc_child_cache;
+insert into cc_child_cache values (517,'jlaw',215,'Y');
+
+--====================================================================================================
+
+select * from cpt_component where cpt_par_id = 33140250063;
+
+select * from cnv_convention cnv, scc_scheme_company scc where cnv.cnv_scc_id = scc.scc_id
+and upper(scc_scheme) like upper('%Cassa di Assistenza AreaSalus%');
+
+
+update QUT_QUOTE 
+set SCC_ID = 1220127668,                                            
+QUT_CONVENTION_NUMBER = null                      
+where CPT_ID = 33140234713;                                      
+
+update ITD_INTRAY_DATA 
+set SCC_SCHEME = 'Cassa di Assistenza Sanint',                      
+QUT_CONVENTION_NUMBER = null                    
+where CPT_ID = 33140250063;
+
+update CPT_COMPONENT 
+set CPT_PAR_ID = 1220127667
+where CPT_ID = 33140250063
+and CPT_TYPE = 'PRT'; 
+
+select * from cnv_convention where cnv_cpt_id = 1196705542; 
+-------backup scripts--------
+
+update QUT_QUOTE 
+set SCC_ID = null,                                           
+QUT_CONVENTION_NUMBER = null                    
+where CPT_ID = 12706987913;                                    
+
+update ITD_INTRAY_DATA 
+set SCC_SCHEME = null,                     
+QUT_CONVENTION_NUMBER = null                      
+where CPT_ID = 12707064263
+
+update CPT_COMPONENT 
+set CPT_PAR_ID = 12707064263
+where CPT_ID = 12707064263
+and CPT_TYPE = 'PRT'; 

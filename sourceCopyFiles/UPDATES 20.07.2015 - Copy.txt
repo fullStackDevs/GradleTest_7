@@ -1,0 +1,94 @@
+--select * from cpr_chubb_producer where upper(cpr_producer_name) like upper('Aon%');
+
+select * from brn_branch where upper(brn_description) like upper('Aon%');
+
+select * from itd_intray_data where cpt_id = 469443873;
+
+select * from cmp_company where upper(cmp_name) like upper('Aon Hong Kong%');
+--cmp_code - 16439  
+select * from brn_branch where cmp_code like '%16439%';
+--select * from cpr_chubb_producer where cpr_producer_number = '16439';
+
+select * from cmp_company where upper(cmp_name) like upper('Aon Hong Kong Ltd (Risk Services)%');
+--cmp_code - 16440    
+select * from brn_branch where cmp_code like '%16440%';
+
+select * from cmp_company where upper(cmp_name) like upper('Arvuda%');
+--cmp_code - 16469      
+select * from brn_branch where cmp_code like '%16469%';
+
+select * from cmp_company where upper(cmp_name) like upper('Assurance Ap%');
+--cmp_code - 16470      
+select * from brn_branch where cmp_code like '%16470%';
+
+select * from cmp_company where upper(cmp_name) like upper('Citic%');
+--cmp_code - 16483      
+select * from brn_branch where cmp_code like '%16483%';
+
+select * from cmp_company where upper(cmp_name) like upper('Convoy Fin%');
+--cmp_code - 33145      
+select * from brn_branch where cmp_code like '%33145%';
+
+select * from cmp_company where upper(cmp_name) like upper('Cosco (Hong%');
+--cmp_code - 16489      
+select * from brn_branch where cmp_code like '%16489%';
+
+
+--******* Nu ext Cosmos Service CO Ltd
+select * from cmp_company where upper(cmp_name) like upper('Cosmos%');
+--cmp_code - 16440    
+select * from brn_branch where cmp_code like '%16440%';
+
+select * from cmp_company where upper(cmp_name) like upper('Cyber Insurance%');
+--cmp_code - 16492      
+select * from brn_branch where cmp_code like '%16492%';
+
+select * from cmp_company where upper(cmp_name) like upper('GTR Insurance%');
+--cmp_code - 16505        
+select * from brn_branch where cmp_code like '%16505%';
+
+select * from cmp_company where upper(cmp_name) like upper('Jardine Ll%');
+--cmp_code - 16514        
+select * from brn_branch where cmp_code like '%16514%';
+
+select * from cmp_company where upper(cmp_name) like upper('Jardine Ll%');
+--cmp_code - 16513          
+select * from brn_branch where cmp_code like '%16513%';
+
+select * from cmp_company where upper(cmp_name) like upper('Jardine Shun Tak Insurance Brokers%');
+--cmp_code - 16515            
+select * from brn_branch where cmp_code like '%16515%';
+
+select * from cmp_company where upper(cmp_name) like upper('Lockton Companies (Hong Kong) Ltd%');
+--cmp_code - 16522        
+select * from brn_branch where cmp_code like '%16522%';
+
+select * from cmp_company where upper(cmp_name) like upper('Marsh (Ho%');
+--cmp_code - 16508  
+        -- - 16525        
+select * from brn_branch where cmp_code like '%16508%';
+select * from brn_branch where cmp_code like '%16525%';
+
+select * from cmp_company where upper(cmp_name) like upper('Melbourne Ins%');
+--cmp_code - 41371          
+select * from brn_branch where cmp_code like '%41371%';
+
+select * from cmp_company where upper(cmp_name) like upper('Newco Ins%');
+--cmp_code - 16531            
+select * from brn_branch where cmp_code like '%16531%';
+
+select * from cmp_company where upper(cmp_name) like upper('Realife Ins%');
+--cmp_code - 16535              
+select * from brn_branch where cmp_code like '%16535%';
+
+select * from cmp_company where upper(cmp_name) like upper('Sime Darby%');
+--cmp_code - 16539                
+select * from brn_branch where cmp_code like '%16539%';
+
+select * from cmp_company where upper(cmp_name) like upper('Union Faith%');
+--cmp_code - 16549                
+select * from brn_branch where cmp_code like '%16549%';
+
+
+
+
